@@ -77,7 +77,7 @@ def str2timedelta(str_duration):
 #   date may be changed based on the sleeptime
 # ===========================================================================
 def typeConvert_sleepbot_entry(logRow):
-    #Convert the date, sleeptime and
+    #Convert the input variables into their correct 
     #Convert the sleeptime to a proper datetime
 
     #Convert the waketime to a proper datetime
@@ -122,4 +122,3 @@ def read_sleepbot_logs(path):
 
 #TODO; delete below
 read_sleepbot_logs('data/SleepBot_Log_20131217-20170720.csv')
-print str2timedelta('07 hr 35 min')
