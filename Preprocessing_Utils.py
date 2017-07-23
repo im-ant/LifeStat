@@ -4,6 +4,7 @@
 ############################################################################"""
 
 import csv
+import datetime
 
 #Anaconda-dependent packages
 import numpy as np
@@ -51,7 +52,9 @@ def read_sleepbot_logs(path):
 #   date may be changed based on the sleeptime
 # ===========================================================================
 def typeConvert_sleepbot_entry(logRow):
+    #
     #Convert the sleeptime to a proper datetime
+
     #Convert the waketime to a proper datetime
     #Convert the duration to a proper duration
     #Convert the rating to an integer
@@ -59,5 +62,38 @@ def typeConvert_sleepbot_entry(logRow):
     #Add things to a list and return
     return None #TODO: temp return
 
+# ===========================================================================
+# Helper function turn a string into a datetime.date object
+#
+# Input:
+#   A string with format "yyyy-mm-dd"
+#
+# Output:
+#   A datetime.date object that describes the date
+# ===========================================================================
+def str2date(str_date):
+    #Split the string into its components and convert to int
+    date_parts = [ int(part) for part in str_date.split('-') ]
+    #Turn it into a datetime object
+    d = datetime.date(date_parts[0], date_parts[1], date_parts[2])
+    return d
+
+# ===========================================================================
+# Helper function turn a string into a datetime.time object
+#
+# Input:
+#   A string with format "hour:min am/pm"
+#
+# Output:
+#   A datetime.time object that describes the time
+# ===========================================================================
+#def str2time(str_time):
+
+
+
+
+
+
 #TODO; delete below
 read_sleepbot_logs('data/SleepBot_Log_20131217-20170720.csv')
+print str2time('09:45 pm')
