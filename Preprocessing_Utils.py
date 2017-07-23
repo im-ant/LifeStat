@@ -32,6 +32,7 @@ def read_sleepbot_logs(path):
     for row in logReader:
         print row
         print len(row)
+        print typeConvert_sleepbot_entry(row)
         break
         #Convert row to proper type
         #Append the row to a dataframe
@@ -87,13 +88,17 @@ def str2date(str_date):
 # Output:
 #   A datetime.time object that describes the time
 # ===========================================================================
-#def str2time(str_time):
-
-
-
+def str2time(str_time):
+    #Split the string into hours and minutes, while converting to integers
+    hour_min = [ int(part) for part in str_time.split(' ')[0].split(':') ]
+    #See if the hour is in pm
+    if str_time.split(' ')[1].strip() == 'pm':
+        hour_min[0] += 12
+    #Convert the integer list to a time object
+    t = datetime.time(hour_min[0], hour_min[1])
+    return t
 
 
 
 #TODO; delete below
 read_sleepbot_logs('data/SleepBot_Log_20131217-20170720.csv')
-print str2time('09:45 pm')
