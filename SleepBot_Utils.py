@@ -6,10 +6,6 @@
 import csv
 import datetime
 
-#Anaconda-dependent packages
-import numpy as np
-import pandas as pd
-
 
 # ===========================================================================
 # Helper function turn a string into a datetime.date object
@@ -94,37 +90,70 @@ def typeConvert_sleepbot_rowEntry(logRow):
 
 
 # ===========================================================================
-# Function correct a list containing log data
+# Function to collapse multiple logs the same date into the same log
+#   It assumes that the list is ordered, going latest date --> oldest date
 #
-# Input:
-#   A list containing the date, sleep time, awake time, duration and rating
-#   for a particular sleepBot log, in its correct objects (i.e. datetime)
-#
-# Output:
-#   Same list, but correct data
 # ===========================================================================
-#def correct_log_data(log_data):
-    #
+def collapse_repeated_dates(data_list):
+    #Initialize a new list to return
+    collapsed_list = []
+    #Iterate through the list
+    i = 0
+    while (i < len(data_list)):
+        #Check to see if the next entries have the same date
+        rep = 1
+        while (i+rep < len(data_list) ) and (data_list[i][0]==data_list[i+rep][0]):
+            rep += 1
+        #If so, collapse them together
+        if rep > 1:
+            #Append the date
+            newlog = [ data_list[i][0] ]
+            #Append the earliest sleeptiem
+            newlog.append(data_list[i+rep-1][1])
+            #Append the latest awake time
+            newlog.append(data_list[i][2])
+            #Add-up and append the sum of all the sleep durations
+            tot_duration = data_list[i][3]
+            for j in range(1,rep):
+                tot_duration += data_list[i+j][3]
+            newlog.append( tot_duration )
+            #Append the latest rating
+            newlog.append(data_list[i][4]) #TODO: fix the appending of ratings
+
+            #Add the newest log to the new list
+            collapsed_list.append(newlog)
+
+        #Else, just add the current list to the new list
+        else:
+            collapsed_list.append(data_list[i])
+
+        #Shift forward the counter and conintue
+        i += rep
+
+    #Replace the datalist with the new list
+    return collapsed_list
 
 
 # ===========================================================================
 # Function to read a .csv file from the sleepbot website, convert the values
-# into appropriate types and save into a pandas.dataframe
+# into appropriate types and save into a nested list
+#
+# TODO: this is an incomplete function
 #
 # Input:
 #   - path: path to the .csv file
 # Output:
-#   - pandas.dataframe containing sleep data in the following format:
-#       pre-sleep date, sleep date-time, awake date-time, duration, rating
+#   - ???
 # ===========================================================================
 def read_sleepbot_logs(path):
+    #Initialize the list to store all the data
+    sleep_data_list = []
+
     #Open the file and read
     log_inStream = open(path, 'rb')
     logReader = csv.reader(log_inStream)
 
-    #Save as list!
-    print "eyo"
-
+    #Iterate through all rows of the input file to store data
     for row in logReader:
         #Strip the elements of pre-existing quotes
         str_row = [ entry.strip('\'').strip('\"') for entry in row ]
@@ -132,18 +161,19 @@ def read_sleepbot_logs(path):
         if 'Date' in str_row:
             continue
 
+        #Convert the current row to proepr types
         log_data = typeConvert_sleepbot_rowEntry(str_row)
-        print row
-        print log_data
-        break
-        #Convert row to proper type
-        #Append the row to a dataframe
-        #
+
+        #Add the row to the list
+        sleep_data_list.append(log_data)
 
     #Close the file
     log_inStream.close()
 
+    #User indication
+    print "Done reading input file. %d sleep logs acquired." % len(sleep_data_list)
 
+    #Collapse
+    colla_list = collapse_repeated_dates(sleep_data_list)
 
-#TODO; delete below
-read_sleepbot_logs('data/SleepBot_Log_20131217-20170720.csv')
+    print len(colla_list)
