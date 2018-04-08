@@ -15,10 +15,12 @@ OUTPUT_FILE = "%s_log.tsv" % datetime.datetime.now().strftime("%Y-%m-%d")
 
 ### Open output stream and csv writer ###
 if not os.path.isfile(OUTPUT_FILE):
+    print("Writing new file to: %s\n" % OUTPUT_FILE)
     outFile = open(OUTPUT_FILE,'w')
     outFile_writer = csv.writer(outFile, delimiter='\t', lineterminator='\n')
     outFile_writer.writerow(['Date','Time', 'Activity'])
 else:
+    print("Opening existing file at: %s\n" % OUTPUT_FILE)
     outFile = open(OUTPUT_FILE,'a')
     outFile_writer = csv.writer(outFile, delimiter='\t', lineterminator='\n')
 
